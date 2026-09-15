@@ -21,13 +21,21 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Use direct image URLs instead of Google share pages, which are not reliable <img> sources.
-          s=s.replace('https://share.google/tx91oPD8BNhxSzGO3','https://commons.wikimedia.org/wiki/Special:FilePath/USB-cable.jpg')
-          s=s.replace('https://share.google/ULHzIW6BzUqW0m6pi','https://commons.wikimedia.org/wiki/Special:FilePath/USB_power_bank.jpg')
-          s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/USB-cable.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/USB-cable.jpg')
-          s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/USB%20power%20bank.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/USB_power_bank.jpg')
+          # Modern, clean product photos for the two category cards.
+          data_cable='https://static.wixstatic.com/media/6469df_c8f9fc9dd42345eca807733bab164073~mv2.jpg/v1/fill/w_520%2Ch_578%2Cal_c%2Cq_80%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/6469df_c8f9fc9dd42345eca807733bab164073~mv2.jpg'
+          power_bank='https://www.itsajten.se/uploads/products/en-kraftfull-och-flexibel-portabel-laddare-med-2x-USB-A-po_14988_6.jpg'
+          for old in [
+            'https://share.google/tx91oPD8BNhxSzGO3',
+            'https://commons.wikimedia.org/wiki/Special:FilePath/USB-cable.jpg',
+            'https://commons.wikimedia.org/wiki/Special:Redirect/file/USB-cable.jpg'
+          ]: s=s.replace(old,data_cable)
+          for old in [
+            'https://share.google/ULHzIW6BzUqW0m6pi',
+            'https://commons.wikimedia.org/wiki/Special:FilePath/USB_power_bank.jpg',
+            'https://commons.wikimedia.org/wiki/Special:Redirect/file/USB%20power%20bank.jpg'
+          ]: s=s.replace(old,power_bank)
 
-          # Important: Firestore products can contain images as either {url,number} objects OR plain URL strings.
+          # Firestore products can contain images as either {url,number} objects OR plain URL strings.
           old="function imageList(p){return (Array.isArray(p.images)?p.images:[]).slice().sort((a,b)=>(Number(a.number)||0)-(Number(b.number)||0)).map(x=>x.url).filter(Boolean).concat(p.image?[p.image]:[])}"
           new="function imageList(p){const a=Array.isArray(p.images)?p.images:[];const out=a.map((x,i)=>typeof x==='string'?{url:x,number:i+1}:x).filter(x=>x&&x.url).sort((a,b)=>(Number(a.number)||0)-(Number(b.number)||0)).map(x=>x.url);if(p.image)out.push(p.image);return [...new Set(out)]}"
           s=s.replace(old,new)
@@ -46,5 +54,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "Use direct category photos and fix product image gallery"
+          git diff --cached --quiet || git commit -m "Use modern category product photos"
           git push
