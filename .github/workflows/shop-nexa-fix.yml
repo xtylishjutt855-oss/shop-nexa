@@ -1,0 +1,43 @@
+name: Shop Nexa final UI fixes
+
+on:
+  push:
+    paths:
+      - '.github/workflows/shop-nexa-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch index.html
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          # Use direct, reliable Wikimedia images for the two problematic categories.
+          import re
+          s=re.sub(r'(<b>Data Cables</b>)', r'<b>Data Cables</b>', s, count=1)
+          data='https://commons.wikimedia.org/wiki/Special:Redirect/file/USB-cable.jpg'
+          power='https://commons.wikimedia.org/wiki/Special:Redirect/file/USB%20power%20bank.jpg'
+          s=re.sub(r'(<div class="category" onclick="filterCat\(\'Data Cables\'\)"><div class="cat-img"><img src=")[^"]+', r'\g<1>'+data, s, count=1)
+          s=re.sub(r'(<div class="category" onclick="filterCat\(\'Power Banks\'\)"><div class="cat-img"><img src=")[^"]+', r'\g<1>'+power, s, count=1)
+          css='''\n<style id="shopnexa-fullscreen-fix">\n.sn-fullscreen{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:28px 5%!important;border:0!important;border-radius:0!important;z-index:9999!important;background:#07090d!important;overflow:auto!important;box-shadow:none!important}.sn-fullscreen .sn-close{position:fixed;right:22px;top:18px;z-index:5}.sn-fullscreen .sn-product-wrap{min-height:calc(100vh - 56px);display:grid;grid-template-columns:minmax(320px,1.1fr) minmax(300px,.9fr);gap:40px;align-items:center}.sn-fullscreen .sn-photo{height:min(70vh,620px);background:#0b0f14;border:1px solid #252b35;border-radius:20px;display:grid;place-items:center;overflow:hidden}.sn-fullscreen .sn-photo img{width:100%;height:100%;object-fit:contain}.sn-fullscreen .sn-info h2{font-size:clamp(28px,4vw,52px);margin:0 0 14px}.sn-fullscreen .sn-price{font-size:28px;font-weight:900;color:#f4b400;margin:15px 0}.sn-fullscreen .sn-cod{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #254b35;background:#0b1710;color:#6ee79a;border-radius:10px;font-weight:800;font-size:12px}.sn-fullscreen .sn-desc{color:#aab2bf;line-height:1.8;margin:20px 0;font-size:14px}.sn-fullscreen .sn-order{display:inline-flex;align-items:center;gap:9px;background:#f4b400;color:#08090b;border:0;border-radius:11px;padding:15px 24px;font-weight:900;font-size:12px}.sn-fullscreen .sn-order:hover{background:#ffd45a;transform:translateY(-2px)}@media(max-width:700px){.sn-fullscreen{padding:18px 4%!important}.sn-fullscreen .sn-product-wrap{grid-template-columns:1fr;gap:18px}.sn-fullscreen .sn-photo{height:48vh}.sn-fullscreen .sn-info h2{font-size:28px}}\n</style>\n'''
+          js='''\n<script>\n(function(){\n  function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}\n  window.openProduct=async function(id){\n    let p=(window.products||[]).find(x=>x.id===id);\n    if(!p && window.db && window.firestoreFns){\n      try{const s=await window.firestoreFns.getDocs(window.firestoreFns.collection(window.db,'products'));p=s.docs.map(d=>({id:d.id,...d.data()})).find(x=>x.id===id)}catch(e){}\n    }\n    if(!p)return;\n    const imgs=(p.images||[]).slice().sort((a,b)=>(a.number||0)-(b.number||0)).map(x=>x.url).filter(Boolean);\n    const image=imgs[0]||p.image||'';\n    const old=document.getElementById('snFullProduct');if(old)old.remove();\n    const m=document.createElement('div');m.id='snFullProduct';m.className='modal show sn-fullscreen';\n    m.innerHTML=`<button class="close sn-close" onclick="document.getElementById('snFullProduct').remove()">×</button><div class="sn-product-wrap"><div class="sn-photo"><img src="${esc(image)}" alt="${esc(p.name)}"></div><div class="sn-info"><div class="eyebrow">SHOP NEXA</div><h2>${esc(p.name)}</h2><div class="sn-price">PKR ${Number(p.price||0).toLocaleString()}</div><div class="sn-cod"><i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery Available</div><div class="sn-desc">${esc(p.description||'Quality product from Shop Nexa. Fast delivery all over Pakistan.')}</div><button class="sn-order" onclick="window.open('https://wa.me/923274670280?text='+encodeURIComponent('Assalam o Alaikum, I want to order: '+${JSON.stringify(p.name)}+' | Price: PKR '+${JSON.stringify(p.price)}),'_blank')"><i class="fa-brands fa-whatsapp"></i> ORDER NOW</button></div></div>`;\n    document.body.appendChild(m);\n  };\n})();\n</script>\n'''
+          s=s.replace('</head>',css+'</head>')
+          s=s.replace('</body>',js+'</body>')
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit patch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --cached --quiet || git commit -m "Fix category photos and fullscreen product ordering"
+          git push
