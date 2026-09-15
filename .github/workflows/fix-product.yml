@@ -1,0 +1,30 @@
+name: Shop Nexa Product Fix
+
+'on':
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Attach product view
+        run: |
+          if grep -q 'product-view-v4.js' index.html; then exit 0; fi
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('</head>','<script src="product-view-v4.js"></script></head>',1)
+          p.write_text(s,encoding='utf-8')
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Attach final product view script'
+          git push
