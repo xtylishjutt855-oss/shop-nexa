@@ -18,49 +18,43 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Direct modern category photos.
+          # Keep category images as direct working image URLs.
           s=s.replace('https://share.google/tx91oPD8BNhxSzGO3','https://commons.wikimedia.org/wiki/Special:FilePath/USB-cable.jpg')
           s=s.replace('https://share.google/ULHzIW6BzUqW0m6pi','https://commons.wikimedia.org/wiki/Special:FilePath/USB_power_bank.jpg')
           s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/USB-cable.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/USB-cable.jpg')
           s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/USB%20power%20bank.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/USB_power_bank.jpg')
 
-          # Support both Firestore image formats.
+          # Support both Firestore image formats: objects and plain URL strings.
           old="function imageList(p){return (Array.isArray(p.images)?p.images:[]).slice().sort((a,b)=>(Number(a.number)||0)-(Number(b.number)||0)).map(x=>x.url).filter(Boolean).concat(p.image?[p.image]:[])}"
           new="function imageList(p){const a=Array.isArray(p.images)?p.images:[];const out=a.map((x,i)=>typeof x==='string'?{url:x,number:i+1}:x).filter(x=>x&&x.url).sort((a,b)=>(Number(a.number)||0)-(Number(b.number)||0)).map(x=>x.url);if(p.image)out.push(p.image);return [...new Set(out)]}"
           s=s.replace(old,new)
 
-          # Improve fullscreen product gallery with thumbnail strip.
-          marker="<div class=\"sn-photo\">${image?`<img src=\"${esc(image)}\" alt=\"${esc(p.name)}\" onerror=\"this.style.display='none'\">`:'<i class=\"fa-solid fa-box\" style=\"font-size:90px;color:#333\"></i>'}</div>"
-          replacement=marker+"<div class=\"sn-thumbs\">${imgs.map((u,i)=>`<img src=\"${esc(u)}\" alt=\"Image ${i+1}\" onclick=\"document.getElementById('snMainProductImage').src='${esc(u)}'\">`).join('')}</div>"
-          s=s.replace(marker,replacement)
+          # The premium gallery must keep the thumbnail strip under the main image,
+          # not as a third grid column. Also make every uploaded image selectable.
+          old2='const imgs=(Array.isArray(p.images)?p.images:[]).slice().sort((a,b)=>(Number(a.number)||0)-(Number(b.number)||0)).map(x=>x.url).filter(Boolean);'
+          new2='const rawImgs=Array.isArray(p.images)?p.images:[];const imgs=rawImgs.map((x,i)=>typeof x===\'string\'?x:x&&x.url).filter(Boolean);if(p.image)imgs.push(p.image);'
+          s=s.replace(old2,new2)
+          s=s.replace('<div class="sn-product-wrap"><div class="sn-photo">','<div class="sn-product-wrap"><div class="sn-media-column"><div class="sn-photo">')
+          s=s.replace('</div><div class="sn-info"><div class="eyebrow">SHOP NEXA</div>','</div></div><div class="sn-info"><div class="eyebrow">SHOP NEXA</div>')
           s=s.replace('<img src="${esc(image)}" alt="${esc(p.name)}" onerror="this.style.display=\'none\'">','<img id="snMainProductImage" src="${esc(image)}" alt="${esc(p.name)}" onerror="this.style.display=\'none\'">')
 
-          # Premium product-detail redesign: layered image stage, clean info card, better mobile layout.
+          # Make product-card and fullscreen images show the complete uploaded image.
           style='''
-          <style id="sn-premium-detail">
-          .sn-fullscreen{padding:0!important;background:radial-gradient(circle at 15% 20%,#1b2029 0,#07090d 42%,#040507 100%)!important}
-          .sn-fullscreen:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 0 45%,#f4b40008 70%,transparent);z-index:0}
-          .sn-fullscreen .sn-close{top:24px;right:28px;width:44px;height:44px;border-radius:50%;background:#11161d;border:1px solid #39414d;color:#fff;font-size:18px;box-shadow:0 10px 35px #0008}
-          .sn-fullscreen .sn-product-wrap{position:relative;z-index:1;min-height:100vh!important;max-width:1320px;margin:auto;padding:70px 6%!important;grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr)!important;gap:65px!important;align-items:center!important}
-          .sn-fullscreen .sn-photo{height:min(68vh,650px)!important;background:linear-gradient(145deg,#151a21,#080b0f)!important;border:1px solid #303844!important;border-radius:28px!important;box-shadow:0 35px 100px #000b, inset 0 1px #ffffff08!important;position:relative}
-          .sn-fullscreen .sn-photo:after{content:"SHOP NEXA";position:absolute;left:24px;bottom:18px;color:#ffffff18;font-size:11px;font-weight:900;letter-spacing:4px;pointer-events:none}
-          .sn-fullscreen .sn-photo img{padding:35px!important;filter:drop-shadow(0 25px 35px #0009)}
-          .sn-fullscreen .sn-thumbs{gap:10px!important;margin-top:14px!important;padding:0 3px 4px!important}
-          .sn-fullscreen .sn-thumbs img{width:72px!important;height:72px!important;border-radius:12px!important;background:#11161d;border:1px solid #303844!important;padding:4px;object-fit:contain!important;transition:.2s}
-          .sn-fullscreen .sn-thumbs img:hover{transform:translateY(-3px);border-color:#f4b400!important;box-shadow:0 8px 22px #f4b40022}
-          .sn-fullscreen .sn-info{background:linear-gradient(145deg,#11161d,#090c11);border:1px solid #303844;border-radius:28px;padding:38px;box-shadow:0 35px 90px #0009}
-          .sn-fullscreen .sn-info:before{content:"PRODUCT DETAILS";display:block;color:#f4b400;font-size:9px;font-weight:900;letter-spacing:3px;margin-bottom:18px}
-          .sn-fullscreen .sn-info h2{font-size:clamp(30px,4vw,52px)!important;line-height:1.05;margin:0 0 10px!important;letter-spacing:-1.5px}
-          .sn-fullscreen .sn-price{font-size:30px!important;color:#f4b400!important;margin:18px 0!important}
-          .sn-fullscreen .sn-cod{width:100%;justify-content:center;box-sizing:border-box;padding:12px 15px!important;border-radius:12px!important}
-          .sn-fullscreen .sn-desc{font-size:13px!important;line-height:1.85!important;color:#9fa8b5!important;border-top:1px solid #252b35;padding-top:20px;margin:22px 0!important}
-          .sn-fullscreen .sn-order{width:100%;justify-content:center;padding:16px 24px!important;border-radius:12px!important;font-size:12px!important;box-shadow:0 12px 30px #f4b40025}
-          @media(max-width:800px){.sn-fullscreen .sn-product-wrap{padding:70px 5% 35px!important;grid-template-columns:1fr!important;gap:22px!important}.sn-fullscreen .sn-photo{height:43vh!important;min-height:300px!important;border-radius:22px!important}.sn-fullscreen .sn-photo img{padding:20px!important}.sn-fullscreen .sn-info{padding:25px 22px!important;border-radius:22px}.sn-fullscreen .sn-info h2{font-size:30px!important}.sn-fullscreen .sn-thumbs img{width:60px!important;height:60px!important}.sn-fullscreen .sn-close{top:14px;right:14px;width:40px;height:40px}}
+          <style id="sn-full-image-fix">
+          .product-image{padding:10px!important;background:#0c1015!important}
+          .product-image img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important;padding:4px!important}
+          .sn-fullscreen .sn-media-column{min-width:0;width:100%}
+          .sn-fullscreen .sn-photo{width:100%!important;height:min(65vh,640px)!important;min-height:360px!important;padding:18px!important;box-sizing:border-box!important}
+          .sn-fullscreen .sn-photo img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center!important;padding:0!important}
+          .sn-fullscreen .sn-thumbs{width:100%!important;display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;justify-content:flex-start!important}
+          .sn-fullscreen .sn-thumbs img{flex:0 0 auto!important;object-fit:contain!important;object-position:center!important}
+          @media(max-width:800px){.sn-fullscreen .sn-photo{height:48vh!important;min-height:280px!important;padding:12px!important}.sn-fullscreen .sn-media-column{width:100%!important}}
           </style>'''
-          if 'id="sn-premium-detail"' not in s:
+          if 'id="sn-full-image-fix"' not in s:
               s=s.replace('</head>',style+'\n</head>')
           p.write_text(s,encoding='utf-8')
           PY
@@ -70,5 +64,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "Redesign product detail screen"
+          git diff --cached --quiet || git commit -m "Fix complete product image display"
           git push
