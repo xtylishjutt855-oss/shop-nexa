@@ -1,0 +1,26 @@
+name: Fix Shop Nexa category images
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace broken category image URLs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          s=s.replace('https://images.unsplash.com/photo-1609592424841-1d5f9b9f1b54?w=500&q=80','https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=500&q=80')
+          s=s.replace('https://images.unsplash.com/photo-1609592424641-1c7b5b7f9f2b?w=500&q=80','https://images.unsplash.com/photo-1609592424841-1d5f9b9f1b54?w=500&q=80')
+          p.write_text(s)
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || (git commit -m 'Fix charger and power bank category images' && git push)
