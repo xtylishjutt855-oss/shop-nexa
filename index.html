@@ -10,6 +10,27 @@
 .cat-img img{background:#15191f} .sn-thumbs{display:flex;gap:8px;margin-top:10px;overflow:auto}.sn-thumbs img{width:64px;height:64px;object-fit:cover;border:1px solid #252b35;border-radius:8px;cursor:pointer}.sn-thumbs img:hover{border-color:#f4b400}
 .sn-fullscreen{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;max-width:none!important;max-height:none!important;margin:0!important;padding:28px 5%!important;border:0!important;border-radius:0!important;z-index:9999!important;background:#07090d!important;overflow:auto!important;box-shadow:none!important}.sn-fullscreen .sn-close{position:fixed;right:22px;top:18px;z-index:5}.sn-fullscreen .sn-product-wrap{min-height:calc(100vh - 56px);display:grid;grid-template-columns:minmax(320px,1.1fr) minmax(300px,.9fr);gap:40px;align-items:center}.sn-fullscreen .sn-photo{height:min(70vh,620px);background:#0b0f14;border:1px solid #252b35;border-radius:20px;display:grid;place-items:center;overflow:hidden}.sn-fullscreen .sn-photo img{width:100%;height:100%;object-fit:contain}.sn-fullscreen .sn-info h2{font-size:clamp(28px,4vw,52px);margin:0 0 14px}.sn-fullscreen .sn-price{font-size:28px;font-weight:900;color:#f4b400;margin:15px 0}.sn-fullscreen .sn-cod{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #254b35;background:#0b1710;color:#6ee79a;border-radius:10px;font-weight:800;font-size:12px}.sn-fullscreen .sn-desc{color:#aab2bf;line-height:1.8;margin:20px 0;font-size:14px}.sn-fullscreen .sn-order{display:inline-flex;align-items:center;gap:9px;background:#f4b400;color:#08090b;border:0;border-radius:11px;padding:15px 24px;font-weight:900;font-size:12px}.sn-fullscreen .sn-order:hover{background:#ffd45a;transform:translateY(-2px)}@media(max-width:700px){.sn-fullscreen{padding:18px 4%!important}.sn-fullscreen .sn-product-wrap{grid-template-columns:1fr;gap:18px}.sn-fullscreen .sn-photo{height:48vh}.sn-fullscreen .sn-info h2{font-size:28px}}
 </style>
+
+<style id="sn-premium-detail">
+.sn-fullscreen{padding:0!important;background:radial-gradient(circle at 15% 20%,#1b2029 0,#07090d 42%,#040507 100%)!important}
+.sn-fullscreen:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 0 45%,#f4b40008 70%,transparent);z-index:0}
+.sn-fullscreen .sn-close{top:24px;right:28px;width:44px;height:44px;border-radius:50%;background:#11161d;border:1px solid #39414d;color:#fff;font-size:18px;box-shadow:0 10px 35px #0008}
+.sn-fullscreen .sn-product-wrap{position:relative;z-index:1;min-height:100vh!important;max-width:1320px;margin:auto;padding:70px 6%!important;grid-template-columns:minmax(0,1.12fr) minmax(360px,.88fr)!important;gap:65px!important;align-items:center!important}
+.sn-fullscreen .sn-photo{height:min(68vh,650px)!important;background:linear-gradient(145deg,#151a21,#080b0f)!important;border:1px solid #303844!important;border-radius:28px!important;box-shadow:0 35px 100px #000b, inset 0 1px #ffffff08!important;position:relative}
+.sn-fullscreen .sn-photo:after{content:"SHOP NEXA";position:absolute;left:24px;bottom:18px;color:#ffffff18;font-size:11px;font-weight:900;letter-spacing:4px;pointer-events:none}
+.sn-fullscreen .sn-photo img{padding:35px!important;filter:drop-shadow(0 25px 35px #0009)}
+.sn-fullscreen .sn-thumbs{gap:10px!important;margin-top:14px!important;padding:0 3px 4px!important}
+.sn-fullscreen .sn-thumbs img{width:72px!important;height:72px!important;border-radius:12px!important;background:#11161d;border:1px solid #303844!important;padding:4px;object-fit:contain!important;transition:.2s}
+.sn-fullscreen .sn-thumbs img:hover{transform:translateY(-3px);border-color:#f4b400!important;box-shadow:0 8px 22px #f4b40022}
+.sn-fullscreen .sn-info{background:linear-gradient(145deg,#11161d,#090c11);border:1px solid #303844;border-radius:28px;padding:38px;box-shadow:0 35px 90px #0009}
+.sn-fullscreen .sn-info:before{content:"PRODUCT DETAILS";display:block;color:#f4b400;font-size:9px;font-weight:900;letter-spacing:3px;margin-bottom:18px}
+.sn-fullscreen .sn-info h2{font-size:clamp(30px,4vw,52px)!important;line-height:1.05;margin:0 0 10px!important;letter-spacing:-1.5px}
+.sn-fullscreen .sn-price{font-size:30px!important;color:#f4b400!important;margin:18px 0!important}
+.sn-fullscreen .sn-cod{width:100%;justify-content:center;box-sizing:border-box;padding:12px 15px!important;border-radius:12px!important}
+.sn-fullscreen .sn-desc{font-size:13px!important;line-height:1.85!important;color:#9fa8b5!important;border-top:1px solid #252b35;padding-top:20px;margin:22px 0!important}
+.sn-fullscreen .sn-order{width:100%;justify-content:center;padding:16px 24px!important;border-radius:12px!important;font-size:12px!important;box-shadow:0 12px 30px #f4b40025}
+@media(max-width:800px){.sn-fullscreen .sn-product-wrap{padding:70px 5% 35px!important;grid-template-columns:1fr!important;gap:22px!important}.sn-fullscreen .sn-photo{height:43vh!important;min-height:300px!important;border-radius:22px!important}.sn-fullscreen .sn-photo img{padding:20px!important}.sn-fullscreen .sn-info{padding:25px 22px!important;border-radius:22px}.sn-fullscreen .sn-info h2{font-size:30px!important}.sn-fullscreen .sn-thumbs img{width:60px!important;height:60px!important}.sn-fullscreen .sn-close{top:14px;right:14px;width:40px;height:40px}}
+</style>
 </head>
 <body>
 <div class="top"><span>Welcome to <b>Shop Nexa</b> | Quality Tech, Better Life.</span><span>Fast Delivery All Over Pakistan</span></div>
