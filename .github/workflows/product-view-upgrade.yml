@@ -1,63 +1,24 @@
-name: Shop Nexa Product View Upgrade
-
+name: Shop Nexa Product View Deploy
 on:
   push:
     branches: [main]
-
 permissions:
   contents: write
-
 jobs:
-  upgrade-product-view:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install final product view
-        shell: python
-        run: |
-          from pathlib import Path
-          path = Path('index.html')
-          text = path.read_text(encoding='utf-8')
-          marker = 'sn-product-view-v4'
-          if marker in text:
-              print('Final product view already installed.')
-              raise SystemExit(0)
-
-          block = r'''
-<style id="sn-product-view-v4">
-.sn-v4{position:fixed!important;inset:0!important;z-index:100000!important;overflow:auto!important;background:#050608!important;color:#f5f7fa!important;padding:0!important;display:block!important}
-.sn-v4 *{box-sizing:border-box}.sn-v4-shell{width:min(1450px,100%);min-height:100vh;margin:auto;padding:30px 5% 55px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);gap:42px;align-items:start}.sn-v4-media{position:sticky;top:24px}.sn-v4-photo{height:min(70vh,650px);min-height:430px;border:1px solid #303844;border-radius:24px;background:radial-gradient(circle at 50% 35%,#202630,#0a0d12 68%);display:grid;place-items:center;position:relative;overflow:hidden;padding:25px;box-shadow:0 30px 90px #000b}.sn-v4-photo img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 25px 30px #0009)}.sn-v4-count{position:absolute;right:16px;top:16px;padding:7px 10px;border:1px solid #303844;border-radius:999px;background:#07090dcc;color:#cbd2dc;font-size:10px;font-weight:900}.sn-v4-nav{position:absolute;left:16px;right:16px;bottom:16px;display:flex;justify-content:space-between}.sn-v4-nav button,.sn-v4-close{width:44px;height:44px;border:1px solid #3a424e;border-radius:50%;background:#0b0f15e8;color:#fff}.sn-v4-nav button:hover,.sn-v4-close:hover{border-color:#f4b400;color:#f4b400}.sn-v4-thumbs{display:flex;gap:10px;overflow:auto;padding:12px 2px}.sn-v4-thumbs img{width:76px;height:76px;flex:0 0 76px;object-fit:contain;padding:4px;border:1px solid #303844;border-radius:12px;background:#10151b;cursor:pointer}.sn-v4-thumbs img.active{border-color:#f4b400;box-shadow:0 0 0 1px #f4b40044}.sn-v4-info{background:linear-gradient(145deg,#11161d,#090c11);border:1px solid #303844;border-radius:24px;padding:34px;box-shadow:0 30px 80px #0009}.sn-v4-kicker{color:#f4b400;font-size:9px;font-weight:900;letter-spacing:3px;margin-bottom:13px}.sn-v4-info h2{font-size:clamp(30px,4vw,52px);line-height:1.04;margin:0 0 12px;letter-spacing:-1.5px}.sn-v4-stars{color:#f4b400;font-size:13px;margin-bottom:14px}.sn-v4-price{font-size:32px;font-weight:950;color:#f4b400;margin:8px 0}.sn-v4-old{text-decoration:line-through;color:#737c88;font-size:14px;margin-bottom:17px}.sn-v4-sale{display:inline-block;text-decoration:none;margin-left:8px;padding:5px 8px;border-radius:7px;background:#2a1d03;border:1px solid #6c4b08;color:#ffd45a;font-size:9px;font-weight:900}.sn-v4-cod{border:1px solid #275b3a;background:#0b1710;color:#72ee9e;border-radius:11px;padding:12px;text-align:center;font-size:11px;font-weight:900}.sn-v4-benefits{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}.sn-v4-benefit{border:1px solid #252d38;border-radius:11px;padding:12px;background:#0b0f14}.sn-v4-benefit i{color:#f4b400;margin-right:7px}.sn-v4-benefit b{font-size:10px}.sn-v4-benefit small{display:block;color:#737d8b;font-size:8px;margin:5px 0 0 22px}.sn-v4-desc{border-top:1px solid #252b35;padding-top:18px;color:#a7afbb;line-height:1.8;font-size:12px;margin-bottom:20px}.sn-v4-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.sn-v4-actions button{min-height:52px;border-radius:11px;font-size:11px;font-weight:900;border:1px solid #3a414d}.sn-v4-cart{background:#f4b400;color:#08090b}.sn-v4-order{background:#163a23;color:#70ee9d;border-color:#275d3a!important}.sn-v4-section{margin-top:18px;border:1px solid #252d38;border-radius:14px;background:#0b0f14;overflow:hidden}.sn-v4-section>button{width:100%;padding:15px 16px;background:none;border:0;color:#fff;text-align:left;font-size:11px;font-weight:900}.sn-v4-section>div{display:none;padding:0 16px 16px;color:#9da6b3;font-size:11px;line-height:1.8}.sn-v4-section.open>div{display:block}.sn-v4-close{position:fixed;right:20px;top:16px;z-index:2}.sn-v4-spec{display:grid;grid-template-columns:1fr 1fr;gap:7px}.sn-v4-spec div{padding:9px;border:1px solid #202833;border-radius:8px;background:#090d12}.sn-v4-spec b{display:block;color:#dce1e8;font-size:9px}.sn-v4-spec span{color:#818b99;font-size:9px}
-@media(max-width:900px){.sn-v4-shell{grid-template-columns:1fr;padding:70px 4% 35px;gap:20px}.sn-v4-media{position:relative;top:auto}.sn-v4-photo{height:52vh;min-height:320px}.sn-v4-info{padding:25px 20px}}
-@media(max-width:520px){.sn-v4-benefits,.sn-v4-actions{grid-template-columns:1fr}.sn-v4-photo{height:44vh;min-height:270px}.sn-v4-thumbs img{width:62px;height:62px;flex-basis:62px}.sn-v4-info h2{font-size:30px}.sn-v4-close{right:12px;top:10px}}
-</style>
-<script>
-(function(){
-  function e(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-  function imgs(p){if(typeof imageList==='function')return imageList(p);const a=Array.isArray(p.images)?p.images:[];return [...new Set(a.map(x=>typeof x==='string'?x:x?.url).filter(Boolean).concat(p.image||''))].filter(Boolean)}
-  function close(){const x=document.getElementById('snV4');if(x)x.remove();document.body.style.overflow=''}
-  function main(i,a){const im=document.getElementById('snV4Main');if(!im||!a.length)return;i=(i+a.length)%a.length;im.src=a[i];im.dataset.i=i;document.querySelectorAll('.sn-v4-thumbs img').forEach((x,n)=>x.classList.toggle('active',n===i));const c=document.getElementById('snV4Count');if(c)c.textContent=(i+1)+' / '+a.length}
-  window.openProduct=function(id){
-    const p=(window.products||[]).find(x=>x.id===id);if(!p)return;
-    close();const a=imgs(p),price=Number(p.price||0),old=Number(p.oldPrice||p.compareAtPrice||0),off=old>price?Math.round((1-price/old)*100):0;
-    const m=document.createElement('div');m.id='snV4';m.className='sn-v4';
-    const thumbs=a.map((u,i)=>`<img class="${i?'':'active'}" src="${e(u)}" onclick="window.snV4Main(${i})">`).join('');
-    const specs=p.specifications||p.specs||{};const entries=typeof specs==='object'&&specs?Object.entries(specs).slice(0,12):[];
-    m.innerHTML=`<button class="sn-v4-close" aria-label="Close">×</button><div class="sn-v4-shell"><div class="sn-v4-media"><div class="sn-v4-photo">${a[0]?`<img id="snV4Main" data-i="0" src="${e(a[0])}" alt="${e(p.name)}">`:'<i class="fa-solid fa-box" style="font-size:90px;color:#333"></i>'}<div class="sn-v4-count" id="snV4Count">${a.length?1:0} / ${a.length}</div><div class="sn-v4-nav"><button id="snV4Prev">‹</button><button id="snV4Next">›</button></div></div><div class="sn-v4-thumbs">${thumbs}</div>${p.video?`<div class="sn-v4-section open"><button>PRODUCT VIDEO</button><div><video src="${e(p.video)}" controls style="width:100%;border-radius:10px"></video></div></div>`:''}</div><div class="sn-v4-info"><div class="sn-v4-kicker">SHOP NEXA • PRODUCT DETAILS</div><h2>${e(p.name||'Product')}</h2><div class="sn-v4-stars">★★★★★ <span style="color:#7e8793;font-size:10px"> Shop Nexa Product</span></div><div class="sn-v4-price">PKR ${money(price)}</div>${old?`<div class="sn-v4-old">PKR ${money(old)} ${off?`<span class="sn-v4-sale">${off}% OFF</span>`:''}</div>`:''}<div class="sn-v4-cod">✓ CASH ON DELIVERY AVAILABLE</div><div class="sn-v4-benefits"><div class="sn-v4-benefit">🚚 <b>Fast Delivery</b><small>All over Pakistan</small></div><div class="sn-v4-benefit">↻ <b>Easy Support</b><small>WhatsApp assistance</small></div><div class="sn-v4-benefit">✓ <b>Quality Checked</b><small>Selected for Shop Nexa</small></div><div class="sn-v4-benefit">🔒 <b>Secure Order</b><small>Direct WhatsApp order</small></div></div><div class="sn-v4-desc">${e(p.description||'Quality product from Shop Nexa. Fast delivery all over Pakistan.')}</div><div class="sn-v4-actions"><button class="sn-v4-cart">ADD TO CART</button><button class="sn-v4-order">ORDER NOW</button></div>${entries.length?`<div class="sn-v4-section"><button>SPECIFICATIONS ＋</button><div><div class="sn-v4-spec">${entries.map(([k,v])=>`<div><b>${e(k)}</b><span>${e(v)}</span></div>`).join('')}</div></div></div>`:''}</div></div>`;
-    document.body.appendChild(m);document.body.style.overflow='hidden';window.snV4Main=i=>main(i,a);
-    m.querySelector('.sn-v4-close').onclick=close;m.querySelector('#snV4Prev').onclick=()=>main(Number(document.getElementById('snV4Main')?.dataset.i||0)-1,a);m.querySelector('#snV4Next').onclick=()=>main(Number(document.getElementById('snV4Main')?.dataset.i||0)+1,a);m.querySelector('.sn-v4-cart').onclick=()=>addCart(p.id);m.querySelector('.sn-v4-order').onclick=()=>orderProduct(p.id);m.addEventListener('click',x=>{if(x.target===m)close()});m.tabIndex=0;m.focus();m.onkeydown=x=>{if(x.key==='Escape')close();if(x.key==='ArrowLeft')main(Number(document.getElementById('snV4Main')?.dataset.i||0)-1,a);if(x.key==='ArrowRight')main(Number(document.getElementById('snV4Main')?.dataset.i||0)+1,a)};
-  };
-})();
-</script>
-'''
-          text = text.replace('</body>', block + '\n</body>', 1)
-          path.write_text(text, encoding='utf-8')
-          print('Final V4 product view installed.')
-      - name: Commit generated change
+      - name: Attach final product view
         shell: bash
         run: |
-          if git diff --quiet -- index.html; then echo "No index change needed."; exit 0; fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if grep -q 'product-view-v4.js' index.html; then
+            echo 'Product view already attached'
+            exit 0
+          fi
+          sed -i 's#</head>#<script src="product-view-v4.js"></script></head>#' index.html
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m "Install final product detail view"
+          git commit -m 'Attach final product view'
           git push
