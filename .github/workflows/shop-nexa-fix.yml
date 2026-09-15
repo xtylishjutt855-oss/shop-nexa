@@ -21,9 +21,11 @@ jobs:
           p=Path('index.html')
           s=p.read_text(encoding='utf-8')
 
-          # Use the user's requested Google share image links for the two category cards.
-          s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/USB-cable.jpg','https://share.google/tx91oPD8BNhxSzGO3')
-          s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/USB%20power%20bank.jpg','https://share.google/ULHzIW6BzUqW0m6pi')
+          # Use direct image URLs instead of Google share pages, which are not reliable <img> sources.
+          s=s.replace('https://share.google/tx91oPD8BNhxSzGO3','https://commons.wikimedia.org/wiki/Special:FilePath/USB-cable.jpg')
+          s=s.replace('https://share.google/ULHzIW6BzUqW0m6pi','https://commons.wikimedia.org/wiki/Special:FilePath/USB_power_bank.jpg')
+          s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/USB-cable.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/USB-cable.jpg')
+          s=s.replace('https://commons.wikimedia.org/wiki/Special:Redirect/file/USB%20power%20bank.jpg','https://commons.wikimedia.org/wiki/Special:FilePath/USB_power_bank.jpg')
 
           # Important: Firestore products can contain images as either {url,number} objects OR plain URL strings.
           old="function imageList(p){return (Array.isArray(p.images)?p.images:[]).slice().sort((a,b)=>(Number(a.number)||0)-(Number(b.number)||0)).map(x=>x.url).filter(Boolean).concat(p.image?[p.image]:[])}"
@@ -36,9 +38,6 @@ jobs:
           s=s.replace(marker,replacement)
           s=s.replace('<img src="${esc(image)}" alt="${esc(p.name)}" onerror="this.style.display=\'none\'">','<img id="snMainProductImage" src="${esc(image)}" alt="${esc(p.name)}" onerror="this.style.display=\'none\'">')
 
-          # If a Google share URL does not resolve as a direct image in img, show a useful fallback rather than a wrong image.
-          s=s.replace("<style id=\"shopnexa-fullscreen-fix\">", "<style id=\"shopnexa-fullscreen-fix\">\n.cat-img img{background:#15191f} .sn-thumbs{display:flex;gap:8px;margin-top:10px;overflow:auto}.sn-thumbs img{width:64px;height:64px;object-fit:cover;border:1px solid #252b35;border-radius:8px;cursor:pointer}.sn-thumbs img:hover{border-color:#f4b400}")
-
           p.write_text(s,encoding='utf-8')
           PY
       - name: Commit patch
@@ -47,5 +46,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "Fix all product image formats and requested category photos"
+          git diff --cached --quiet || git commit -m "Use direct category photos and fix product image gallery"
           git push
