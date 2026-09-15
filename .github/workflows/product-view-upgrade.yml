@@ -1,0 +1,128 @@
+name: Shop Nexa Product View Upgrade
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade-product-view:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upgrade product view once
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          marker = 'id="sn-audionic-style-v2"'
+          if marker in text:
+              print('Product view already upgraded.')
+              raise SystemExit(0)
+
+          css = r'''
+          <style id="sn-audionic-style-v2">
+          .sn-fullscreen{padding:0!important;background:radial-gradient(circle at 10% 10%,#1b2029 0,#07090d 42%,#030405 100%)!important}
+          .sn-fullscreen .sn-product-wrap{width:min(1420px,100%);min-height:100vh!important;margin:auto;padding:72px 5% 55px!important;display:grid!important;grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr)!important;gap:42px!important;align-items:start!important}
+          .sn-fullscreen .sn-media-column{min-width:0;position:sticky;top:30px}
+          .sn-fullscreen .sn-photo{height:min(68vh,650px)!important;min-height:430px!important;border-radius:24px!important;background:linear-gradient(145deg,#151a21,#080b0f)!important;border:1px solid #303844!important;box-shadow:0 30px 90px #000b!important;padding:25px!important;position:relative}
+          .sn-fullscreen .sn-photo img{width:100%!important;height:100%!important;object-fit:contain!important;padding:0!important;filter:drop-shadow(0 24px 32px #0009)}
+          .sn-gallery-nav{position:absolute;inset:auto 18px 18px;display:flex;justify-content:space-between;pointer-events:none}
+          .sn-gallery-nav button{pointer-events:auto;width:42px;height:42px;border-radius:50%;border:1px solid #39414d;background:#0d1218e8;color:#fff;font-size:16px;box-shadow:0 8px 25px #0008}
+          .sn-gallery-nav button:hover{color:#f4b400;border-color:#f4b400}
+          .sn-image-count{position:absolute;right:18px;top:18px;padding:7px 10px;border-radius:999px;background:#07090dcc;border:1px solid #303844;color:#c8ced7;font-size:10px;font-weight:800}
+          .sn-fullscreen .sn-thumbs{display:flex!important;gap:10px!important;overflow-x:auto!important;margin:13px 0 0!important;padding:2px 2px 7px!important}
+          .sn-fullscreen .sn-thumbs img{flex:0 0 76px!important;width:76px!important;height:76px!important;border-radius:12px!important;border:1px solid #303844!important;background:#11161d!important;padding:4px!important;object-fit:contain!important;cursor:pointer;transition:.2s}
+          .sn-fullscreen .sn-thumbs img:hover,.sn-fullscreen .sn-thumbs img.active{border-color:#f4b400!important;box-shadow:0 0 0 1px #f4b40044,0 8px 22px #f4b40018;transform:translateY(-2px)}
+          .sn-fullscreen .sn-info{background:linear-gradient(145deg,#11161d,#090c11)!important;border:1px solid #303844!important;border-radius:24px!important;padding:34px!important;box-shadow:0 30px 80px #0009!important;position:relative}
+          .sn-fullscreen .sn-info:before{content:"PRODUCT DETAILS";display:block;color:#f4b400;font-size:9px;font-weight:900;letter-spacing:3px;margin-bottom:15px}
+          .sn-fullscreen .sn-info h2{font-size:clamp(30px,4vw,50px)!important;line-height:1.04!important;margin:0 0 12px!important;letter-spacing:-1.4px!important}
+          .sn-rating{display:flex;align-items:center;gap:8px;margin:4px 0 14px;color:#f4b400;font-size:12px}.sn-rating span{color:#8e98a6;font-size:11px}
+          .sn-fullscreen .sn-price{font-size:31px!important;font-weight:950!important;color:#f4b400!important;margin:8px 0 3px!important}.sn-old-price{text-decoration:line-through;color:#707887;font-size:14px;margin-bottom:16px}.sn-sale{display:inline-flex;padding:6px 9px;border-radius:7px;background:#281c03;border:1px solid #6c4b08;color:#ffd45a;font-size:9px;font-weight:900;margin-left:6px}
+          .sn-benefits{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:20px 0}.sn-benefit{border:1px solid #252d38;border-radius:10px;padding:11px;background:#0b0f14}.sn-benefit i{color:#f4b400;margin-right:7px}.sn-benefit b{font-size:10px}.sn-benefit small{display:block;color:#737d8b;font-size:8px;margin-top:4px;padding-left:22px}
+          .sn-fullscreen .sn-cod{width:100%;justify-content:center;box-sizing:border-box;padding:12px 15px!important;border-radius:11px!important;margin-bottom:17px}.sn-fullscreen .sn-desc{border-top:1px solid #252b35;padding-top:18px!important;color:#a7afbb!important;line-height:1.8!important;font-size:12px!important;margin:0 0 20px!important}
+          .sn-action-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.sn-add-cart,.sn-order2{min-height:50px;border-radius:11px;border:1px solid #3a414d;font-size:11px;font-weight:900}.sn-add-cart{background:#f4b400;color:#08090b}.sn-order2{background:#163a23;color:#70ee9d;border-color:#275d3a}.sn-add-cart:hover{background:#ffd45a}.sn-order2:hover{background:#1c4b2c}
+          .sn-section{margin-top:18px;border:1px solid #252d38;border-radius:15px;overflow:hidden;background:#0b0f14}.sn-section summary{padding:15px 16px;cursor:pointer;font-weight:900;font-size:11px;list-style:none}.sn-section summary::-webkit-details-marker{display:none}.sn-section summary:after{content:'+';float:right;color:#f4b400;font-size:17px}.sn-section[open] summary:after{content:'−'}.sn-section-content{padding:0 16px 16px;color:#9da6b3;font-size:11px;line-height:1.8}.sn-spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.sn-spec{padding:9px 10px;border:1px solid #202833;border-radius:8px;background:#090d12}.sn-spec b{display:block;color:#dce1e8;font-size:9px}.sn-spec span{color:#818b99;font-size:9px}
+          @media(max-width:900px){.sn-fullscreen .sn-product-wrap{grid-template-columns:1fr!important;padding:68px 4% 35px!important;gap:20px!important}.sn-fullscreen .sn-media-column{position:relative;top:auto}.sn-fullscreen .sn-photo{height:48vh!important;min-height:300px!important}.sn-fullscreen .sn-info{padding:25px 20px!important}.sn-fullscreen .sn-info h2{font-size:30px!important}}
+          @media(max-width:520px){.sn-fullscreen .sn-thumbs img{flex-basis:62px!important;width:62px!important;height:62px!important}.sn-benefits{grid-template-columns:1fr}.sn-action-row{grid-template-columns:1fr}.sn-fullscreen .sn-photo{height:43vh!important}.sn-fullscreen .sn-close{right:12px!important;top:12px!important}}
+          </style>
+          '''
+
+          text = text.replace('</head>', css + '\n</head>', 1)
+
+          pattern = re.compile(r'<script>\s*\(function\(\)\{\s*function esc\(v\).*?</script>\s*</body>', re.S)
+          replacement = r'''<script>
+          (function(){
+            function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+            function imgsFor(p){
+              if(typeof imageList==='function') return imageList(p);
+              const a=Array.isArray(p?.images)?p.images:[];
+              const out=a.map((x,i)=>typeof x==='string'?x:x&&x.url).filter(Boolean);
+              if(p?.image)out.push(p.image); return [...new Set(out)];
+            }
+            function setMain(index,imgs){
+              const img=document.getElementById('snMainProductImage'); if(!img||!imgs.length)return;
+              index=(index+imgs.length)%imgs.length; img.src=imgs[index]; img.dataset.index=index;
+              document.querySelectorAll('.sn-fullscreen .sn-thumbs img').forEach((x,i)=>x.classList.toggle('active',i===index));
+              const c=document.getElementById('snImageCount'); if(c)c.textContent=(index+1)+' / '+imgs.length;
+            }
+            window.openProduct=function(id){
+              const p=(window.products||[]).find(x=>x.id===id); if(!p)return;
+              const imgs=imgsFor(p), image=imgs[0]||''; const old=document.getElementById('snFullProduct'); if(old)old.remove();
+              const m=document.createElement('div'); m.id='snFullProduct'; m.className='modal show sn-fullscreen';
+              const oldPrice=Number(p.oldPrice||p.compareAtPrice||0), price=Number(p.price||0), discount=oldPrice>price?Math.round((1-price/oldPrice)*100):0;
+              const specs=p.specifications||p.specs||{};
+              const specEntries=typeof specs==='object'&&specs?Object.entries(specs).slice(0,12):[];
+              const thumbs=imgs.map((u,i)=>`<img class="${i===0?'active':''}" src="${esc(u)}" alt="Image ${i+1}" onclick="setMain(${i},window.__snImgs)">`).join('');
+              const specHtml=specEntries.length?`<details class="sn-section" open><summary>Specifications</summary><div class="sn-section-content"><div class="sn-spec-grid">${specEntries.map(([k,v])=>`<div class="sn-spec"><b>${esc(k)}</b><span>${esc(v)}</span></div>`).join('')}</div></div></details>`:'';
+              m.innerHTML=`<button class="close sn-close" aria-label="Close" onclick="document.getElementById('snFullProduct').remove()">×</button>
+              <div class="sn-product-wrap">
+                <div class="sn-media-column">
+                  <div class="sn-photo">${image?`<img id="snMainProductImage" data-index="0" src="${esc(image)}" alt="${esc(p.name)}" onerror="this.style.opacity='.2'">`:'<i class="fa-solid fa-box" style="font-size:90px;color:#333"></i>'}<div class="sn-image-count" id="snImageCount">${imgs.length?1:0} / ${imgs.length}</div><div class="sn-gallery-nav"><button onclick="setMain(Number(document.getElementById('snMainProductImage').dataset.index||0)-1,window.__snImgs)"><i class="fa-solid fa-chevron-left"></i></button><button onclick="setMain(Number(document.getElementById('snMainProductImage').dataset.index||0)+1,window.__snImgs)"><i class="fa-solid fa-chevron-right"></i></button></div></div>
+                  <div class="sn-thumbs">${thumbs}</div>
+                  ${p.video?`<details class="sn-section"><summary>Product Video</summary><div class="sn-section-content"><video src="${esc(p.video)}" controls style="width:100%;border-radius:10px;background:#050608"></video></div></details>`:''}
+                </div>
+                <div class="sn-info">
+                  <h2>${esc(p.name||'Product')}</h2>
+                  <div class="sn-rating"><span>★★★★★</span><span>Shop Nexa Product</span></div>
+                  <div class="sn-price">PKR ${money(price)}</div>${oldPrice?`<div class="sn-old-price">PKR ${money(oldPrice)} ${discount?`<span class="sn-sale">${discount}% OFF</span>`:''}</div>`:''}
+                  <div class="sn-cod"><i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery Available</div>
+                  <div class="sn-benefits"><div class="sn-benefit"><i class="fa-solid fa-truck-fast"></i><b>Fast Delivery</b><small>All over Pakistan</small></div><div class="sn-benefit"><i class="fa-solid fa-rotate"></i><b>Easy Support</b><small>WhatsApp assistance</small></div><div class="sn-benefit"><i class="fa-solid fa-shield-halved"></i><b>Quality Checked</b><small>Selected for Shop Nexa</small></div><div class="sn-benefit"><i class="fa-solid fa-lock"></i><b>Secure Order</b><small>Order directly with us</small></div></div>
+                  <div class="sn-desc">${esc(p.description||'Quality product from Shop Nexa. Fast delivery all over Pakistan.')}</div>
+                  <div class="sn-action-row"><button class="sn-add-cart" onclick="addCart('${p.id}')"><i class="fa-solid fa-cart-plus"></i> ADD TO CART</button><button class="sn-order2" onclick="orderProduct('${p.id}')"><i class="fa-brands fa-whatsapp"></i> ORDER NOW</button></div>
+                  ${specHtml}
+                </div>
+              </div>`;
+              document.body.appendChild(m); window.__snImgs=imgs;
+              document.body.style.overflow='hidden';
+              m.addEventListener('click',e=>{if(e.target===m){m.remove();document.body.style.overflow='';}});
+              m.querySelector('.sn-close').addEventListener('click',()=>document.body.style.overflow='');
+              m.addEventListener('keydown',()=>{}); m.tabIndex=0; m.focus();
+              m.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')setMain(Number(document.getElementById('snMainProductImage')?.dataset.index||0)-1,window.__snImgs);if(e.key==='ArrowRight')setMain(Number(document.getElementById('snMainProductImage')?.dataset.index||0)+1,window.__snImgs);if(e.key==='Escape'){m.remove();document.body.style.overflow='';}});
+            };
+          })();
+          </script>
+          </body>'''
+          new_text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit('Could not locate existing product-view override block; file left unchanged.')
+          path.write_text(new_text, encoding='utf-8')
+          print('Premium product view installed.')
+
+      - name: Commit generated upgrade
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No index change needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Implement premium Shop Nexa product view"
+          git push
