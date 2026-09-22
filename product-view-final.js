@@ -42,3 +42,33 @@
   }
   window.openProduct=open;window.ShopNexaOpenProduct=open;
 })();
+/* FINAL WHITE THEME HARD LOCK */
+(function(){
+  const s=document.createElement('style');
+  s.id='sn-final-white-lock';
+  s.textContent=`
+  html body #sn-store-product,
+  html body #sn-store-product *{box-sizing:border-box}
+  html body #sn-store-product{background:#fff!important;color:#171717!important;color-scheme:light!important}
+  html body #sn-store-product .sn-sp-top,
+  html body #sn-store-product .sn-sp-brand,
+  html body #sn-store-product .sn-sp-info,
+  html body #sn-store-product .sn-sp-details,
+  html body #sn-store-product .sn-sp-breadcrumb{background:#fff!important;color:#171717!important}
+  html body #sn-store-product .sn-sp-photo,
+  html body #sn-store-product .sn-sp-thumbs img{background:#fafafa!important}
+  html body #sn-store-product .sn-sp-close{background:#fff!important;color:#171717!important;border-color:#ddd!important}
+  html body #sn-store-product .sn-sp-category,
+  html body #sn-store-product .sn-sp-desc,
+  html body #sn-store-product .sn-sp-details p,
+  html body #sn-store-product .sn-sp-back{color:#555!important}
+  html body #sn-store-product .sn-sp-price,
+  html body #sn-store-product .sn-sp-info h1,
+  html body #sn-store-product .sn-sp-details h3{color:#171717!important}
+  html body #sn-store-product .sn-sp-line{background:#e9e9e9!important}
+  html body #sn-store-product .sn-sp-nav button{background:#fff!important;color:#333!important;border-color:#ddd!important}
+  html body #sn-store-product .sn-sp-cart{background:#fff!important;color:#111!important;border-color:#222!important}
+  html body #sn-store-product .sn-sp-order{background:#111!important;color:#fff!important;border-color:#111!important}
+  `;
+  document.head.appendChild(s);
+})();
