@@ -251,7 +251,7 @@ body.dark-theme .cart-row,.dark-theme .admin-item{border-color:#252b35!important
 body.dark-theme .features{background:#0d1015!important;border-color:#252b35!important}.dark-theme .feature{border-color:#252b35!important;color:#f5f7fa!important}.dark-theme .feature span{color:#9299a6!important}
 body.dark-theme .sn-fullscreen{background:#050608!important;color:#f5f7fa!important}.dark-theme .sn-fullscreen .sn-photo,.dark-theme .sn-fullscreen .sn-info{background:#0d1015!important;border-color:#252b35!important;color:#f5f7fa!important}.dark-theme .sn-fullscreen .sn-info h2,.dark-theme .sn-fullscreen .sn-desc{color:#f5f7fa!important}.dark-theme .sn-fullscreen .sn-desc{border-color:#252b35!important;color:#9299a6!important}.dark-theme .sn-fullscreen .sn-close{background:#12161d!important;color:#fff!important;border-color:#353b46!important}
 body.dark-theme #orderModal{background:rgba(0,0,0,.78)!important}.dark-theme #orderModal .box{background:#0d1015!important;color:#f5f7fa!important}.dark-theme #orderSummary>div{background:#12161d!important;border-color:#252b35!important}
-</style><script src="product-view-v4.js"></script></head>
+</style></head>
 <body>
 <div class="top"><span>Welcome to <b>Shop Nexa</b> | Quality Tech, Better Life.</span><span>Fast Delivery All Over Pakistan</span></div>
 <nav><a href="#home" class="logo"><div class="logo-mark"><i class="fa-solid fa-cart-shopping"></i></div><div class="logo-text">SHOP <span>NEXA</span><small>YOUR SMART SHOP</small></div></a><div class="navlinks"><a href="#home">HOME</a><a href="#categories">CATEGORIES</a><a href="#products">PRODUCTS</a><a href="#offers">OFFERS</a><a href="#contact">CONTACT</a></div><div class="actions"><button class="icon" onclick="toggleSearch()"><i class="fa-solid fa-magnifying-glass"></i></button><button class="icon" onclick="openCart()"><i class="fa-solid fa-cart-shopping"></i><sup class="badge" id="cartCount">0</sup></button><button class="icon theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Switch theme">🌙</button></div></nav>
@@ -371,4 +371,5 @@ window.toggleSearch=toggleSearch;window.searchProducts=searchProducts;window.fil
 (function(){const saved=localStorage.getItem('shopnexa_theme');if(saved==='dark')document.body.classList.add('dark-theme');})();
 function toggleTheme(){const dark=document.body.classList.toggle('dark-theme');localStorage.setItem('shopnexa_theme',dark?'dark':'light');const b=document.getElementById('themeToggle');if(b)b.textContent=dark?'☀️':'🌙'}
 document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('themeToggle');if(b)b.textContent=document.body.classList.contains('dark-theme')?'☀️':'🌙'});
-</script></body></html>
+</script><script src="product-view-v4.js"></script>
+</body></html>
