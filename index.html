@@ -235,6 +235,22 @@ footer{background:#08090b!important;color:#fff!important}.foot a,.foot p{color:#
 #orderModal{background:rgba(255,255,255,.88)!important;backdrop-filter:blur(10px)!important}#orderModal .box{background:#fff!important;color:#191b20!important;border-color:#ddd!important}#orderSummary>div{background:#f7f7f5!important;border-color:#ddd!important}
 .sn-fullscreen{background:#f7f7f5!important;color:#191b20!important}.sn-fullscreen:before{background:linear-gradient(120deg,transparent 0 45%,#f4b40008 70%,transparent)!important}.sn-fullscreen .sn-photo{background:#fff!important;border-color:#ddd!important;box-shadow:0 25px 70px #00000014!important}.sn-fullscreen .sn-info{background:#fff!important;border-color:#ddd!important;box-shadow:0 25px 70px #00000012!important}.sn-fullscreen .sn-info h2,.sn-fullscreen .sn-desc{color:#191b20!important}.sn-fullscreen .sn-desc{border-color:#e2e2e2!important;color:#666!important}.sn-fullscreen .sn-thumbs img{background:#f4f5f7!important;border-color:#ddd!important}.sn-fullscreen .sn-close{background:#fff!important;color:#222!important;border-color:#d8dadd!important}.sn-fullscreen .sn-section{border-color:#ddd!important;background:#fff!important}.sn-fullscreen .sn-section summary{color:#191b20!important}.sn-fullscreen .sn-benefit{background:#f7f7f5!important;border-color:#e2e2e2!important;color:#191b20!important}.sn-fullscreen .sn-gallery-nav button{background:#fff!important;color:#222!important;border-color:#ddd!important}
 @media(max-width:700px){nav{box-shadow:0 2px 10px #0000000b!important}}
+</style><style id="sn-theme-toggle">
+.theme-toggle{width:38px;height:38px;border:1px solid #d8dadd;border-radius:50%;background:#fff;color:#222;cursor:pointer;font-size:17px;display:inline-flex;align-items:center;justify-content:center;margin-right:4px}
+body.dark-theme{background:#050608!important;color:#f5f7fa!important}
+body.dark-theme nav{background:rgba(5,6,8,.94)!important;color:#fff!important;border-color:#252b35!important}
+body.dark-theme .navlinks a{color:#d9dce0!important}.dark-theme .navlinks a:hover{color:#ffd45a!important}
+body.dark-theme .theme-toggle{background:#12161d!important;color:#ffd45a!important;border-color:#353b46!important}
+body.dark-theme section{background:#050608!important}.dark-theme .head h2,.dark-theme .head p{color:#f5f7fa!important}
+body.dark-theme .category,body.dark-theme .card{background:#0d1015!important;border-color:#252b35!important;color:#f5f7fa!important;box-shadow:0 8px 25px #0005!important}
+body.dark-theme .category b,body.dark-theme .category span,body.dark-theme .card h3,body.dark-theme .price{color:#f5f7fa!important}.dark-theme .category span{color:#9299a6!important}
+body.dark-theme .cat-img,body.dark-theme .product-image{background:#12161d!important}
+body.dark-theme .box{background:#0d1015!important;color:#f5f7fa!important;border-color:#252b35!important}.dark-theme .field{background:#12161d!important;color:#f5f7fa!important;border-color:#353b46!important}
+body.dark-theme .search-panel{background:#0d1015!important;border-color:#252b35!important}.dark-theme .search-panel input{background:#12161d!important;color:#fff!important;border-color:#353b46!important}
+body.dark-theme .cart-row,.dark-theme .admin-item{border-color:#252b35!important;color:#f5f7fa!important}
+body.dark-theme .features{background:#0d1015!important;border-color:#252b35!important}.dark-theme .feature{border-color:#252b35!important;color:#f5f7fa!important}.dark-theme .feature span{color:#9299a6!important}
+body.dark-theme .sn-fullscreen{background:#050608!important;color:#f5f7fa!important}.dark-theme .sn-fullscreen .sn-photo,.dark-theme .sn-fullscreen .sn-info{background:#0d1015!important;border-color:#252b35!important;color:#f5f7fa!important}.dark-theme .sn-fullscreen .sn-info h2,.dark-theme .sn-fullscreen .sn-desc{color:#f5f7fa!important}.dark-theme .sn-fullscreen .sn-desc{border-color:#252b35!important;color:#9299a6!important}.dark-theme .sn-fullscreen .sn-close{background:#12161d!important;color:#fff!important;border-color:#353b46!important}
+body.dark-theme #orderModal{background:rgba(0,0,0,.78)!important}.dark-theme #orderModal .box{background:#0d1015!important;color:#f5f7fa!important}.dark-theme #orderSummary>div{background:#12161d!important;border-color:#252b35!important}
 </style></head>
 <body>
 <div class="top"><span>Welcome to <b>Shop Nexa</b> | Quality Tech, Better Life.</span><span>Fast Delivery All Over Pakistan</span></div>
@@ -351,4 +367,8 @@ window.toggleSearch=toggleSearch;window.searchProducts=searchProducts;window.fil
 
 
 <script src="product-view-final.js?v=20260916"></script>
-</body></html>
+<script id="sn-theme-script">
+(function(){const saved=localStorage.getItem('shopnexa_theme');if(saved==='dark')document.body.classList.add('dark-theme');})();
+function toggleTheme(){const dark=document.body.classList.toggle('dark-theme');localStorage.setItem('shopnexa_theme',dark?'dark':'light');const b=document.getElementById('themeToggle');if(b)b.textContent=dark?'☀️':'🌙'}
+document.addEventListener('DOMContentLoaded',()=>{const b=document.getElementById('themeToggle');if(b)b.textContent=document.body.classList.contains('dark-theme')?'☀️':'🌙'});
+</script></body></html>
