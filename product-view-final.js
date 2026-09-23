@@ -38,7 +38,7 @@
     e.querySelector('.sn-sp-close').onclick=close;e.querySelector('.sn-sp-back').onclick=close;e.querySelector('#snSpPrev').onclick=()=>show(i-1);e.querySelector('#snSpNext').onclick=()=>show(i+1);e.querySelectorAll('.sn-sp-thumbs img').forEach(x=>x.onclick=()=>show(Number(x.dataset.i)));
     e.querySelector('#snSpMinus').onclick=()=>{q=Math.max(1,q-1);e.querySelector('#snSpQty').textContent=q};e.querySelector('#snSpPlus').onclick=()=>{q=Math.min(99,q+1);e.querySelector('#snSpQty').textContent=q};
     e.querySelector('.sn-sp-cart').onclick=()=>{if(typeof window.addCart==='function'){for(let z=0;z<q;z++)window.addCart(id)}else alert('Cart is not available')};
-    e.querySelector('.sn-sp-order').onclick=()=>{if(typeof window.orderProduct==='function')window.orderProduct(id);else window.open('https://wa.me/923274670280?text='+encodeURIComponent('Assalam o Alaikum, I want to order: '+(p.name||'Product')+' | Quantity: '+q),'_blank')};
+    e.querySelector('.sn-sp-order').onclick=()=>{if(typeof window.orderProduct==='function')window.orderProduct(id,q);else window.open('https://wa.me/923274670280?text='+encodeURIComponent('Assalam o Alaikum, I want to order: '+(p.name||'Product')+' | Quantity: '+q),'_blank')};
   }
   window.openProduct=open;window.ShopNexaOpenProduct=open;
 })();
