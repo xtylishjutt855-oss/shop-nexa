@@ -599,4 +599,165 @@ window.toggleSearch=toggleSearch;window.searchProducts=searchProducts;window.fil
 
 
 <script src="product-view-final.js?v=20260924"></script>
+
+<style id="shopnexa-full-product-editor">
+.sn-editor-modal{display:none;position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);padding:18px;overflow:auto}
+.sn-editor-modal.show{display:block}
+.sn-editor-box{width:min(1050px,100%);margin:20px auto;background:#0d1015;border:1px solid #303743;border-radius:20px;box-shadow:0 30px 100px #000;color:#fff;padding:22px}
+.sn-editor-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.sn-editor-head h2{margin:0;font-size:20px}.sn-editor-sub{color:#9299a6;font-size:10px;margin-top:5px}
+.sn-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sn-editor-field{min-width:0}.sn-editor-field.full{grid-column:1/-1}
+.sn-editor-field label{display:block;color:#cfd4dc;font-size:10px;font-weight:800;margin:3px 0 5px}
+.sn-editor-input,.sn-editor-textarea,.sn-editor-select{width:100%;background:#080b0f!important;color:#fff!important;border:1px solid #303743!important;border-radius:9px;padding:10px;outline:0}
+.sn-editor-input:focus,.sn-editor-textarea:focus,.sn-editor-select:focus{border-color:#f4b400!important}
+.sn-editor-textarea{min-height:110px;resize:vertical}.sn-editor-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;position:sticky;bottom:0;background:linear-gradient(transparent,#0d1015 25%);padding-top:18px}
+.sn-editor-btn{border:0;border-radius:9px;padding:11px 16px;font-size:10px;font-weight:900}.sn-editor-save{background:#f4b400;color:#08090b}.sn-editor-cancel{background:#1b2027;color:#fff;border:1px solid #303743}
+.sn-editor-images{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.sn-editor-image-row{border:1px solid #272e38;border-radius:10px;padding:9px;background:#090d12}.sn-editor-image-top{display:flex;align-items:center;justify-content:space-between;font-size:9px;color:#9299a6;margin-bottom:7px}.sn-editor-image-row img{width:100%;height:105px;object-fit:contain;background:#080b0f;border-radius:8px;margin-bottom:7px}.sn-editor-image-row .sn-remove-image{background:#261010;color:#ff8b8b;border:1px solid #542323;border-radius:7px;padding:6px 8px;font-size:8px;font-weight:800}
+.sn-editor-note{font-size:9px;color:#858e9b;line-height:1.6;margin-top:7px}.sn-editor-status{font-size:10px;color:#f4b400;min-height:18px;margin-top:8px}
+.sn-editor-list{margin-top:18px;border-top:1px solid #252c35}.sn-editor-list-row{display:grid;grid-template-columns:60px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid #252c35}.sn-editor-list-row img{width:60px;height:60px;object-fit:contain;background:#080b0f;border-radius:9px}.sn-editor-list-row b{font-size:11px}.sn-editor-list-row span{display:block;color:#9299a6;font-size:9px;margin-top:4px}.sn-editor-edit{background:#f4b400;color:#08090b;border:0;border-radius:7px;padding:8px 11px;font-size:9px;font-weight:900}
+@media(max-width:650px){.sn-editor-box{padding:15px}.sn-editor-grid,.sn-editor-images{grid-template-columns:1fr}.sn-editor-field.full{grid-column:auto}.sn-editor-actions{position:static;flex-wrap:wrap}.sn-editor-list-row{grid-template-columns:48px 1fr}.sn-editor-list-row img{width:48px;height:48px}.sn-editor-list-row .sn-editor-edit{grid-column:2;justify-self:start}}
+</style>
+<div id="snProductEditor" class="sn-editor-modal" aria-hidden="true">
+  <div class="sn-editor-box">
+    <div class="sn-editor-head">
+      <div><h2 id="snEditorTitle">Edit Product</h2><div class="sn-editor-sub">Edit every product field saved in Shop Nexa.</div></div>
+      <button class="close" type="button" onclick="closeProductEditor()">×</button>
+    </div>
+    <div class="sn-editor-grid">
+      <div class="sn-editor-field"><label>Product Name</label><input id="snEName" class="sn-editor-input"></div>
+      <div class="sn-editor-field"><label>SKU</label><input id="snESku" class="sn-editor-input" placeholder="e.g. RN-AP2-BLK"></div>
+      <div class="sn-editor-field"><label>Price (PKR)</label><input id="snEPrice" class="sn-editor-input" type="number"></div>
+      <div class="sn-editor-field"><label>Old / Compare Price (PKR)</label><input id="snEOldPrice" class="sn-editor-input" type="number" placeholder="Optional"></div>
+      <div class="sn-editor-field"><label>Sale Price (PKR)</label><input id="snESalePrice" class="sn-editor-input" type="number" placeholder="Optional"></div>
+      <div class="sn-editor-field"><label>Discount</label><input id="snEDiscount" class="sn-editor-input" placeholder="e.g. 20% OFF"></div>
+      <div class="sn-editor-field"><label>Category</label><select id="snECategory" class="sn-editor-select"><option>Airbuds</option><option>Chargers</option><option>Data Cables</option><option>Mini Speakers</option><option>Mobile Accessories</option><option>Power Banks</option></select></div>
+      <div class="sn-editor-field"><label>Stock Quantity</label><input id="snEStock" class="sn-editor-input" type="number" min="0"></div>
+      <div class="sn-editor-field"><label>Product Tag</label><select id="snETag" class="sn-editor-select"><option value="NEW">NEW</option><option value="SALE">SALE</option><option value="HOT">HOT</option><option value="BEST SELLER">BEST SELLER</option></select></div>
+      <div class="sn-editor-field"><label>Video URL</label><input id="snEVideo" class="sn-editor-input" placeholder="Existing Cloudinary video URL"></div>
+      <div class="sn-editor-field full"><label>Description</label><textarea id="snEDescription" class="sn-editor-textarea"></textarea></div>
+      <div class="sn-editor-field full"><label>Specifications</label><textarea id="snESpecs" class="sn-editor-textarea" placeholder="Enter product specifications"></textarea></div>
+      <div class="sn-editor-field full">
+        <label>Product Images — up to 10</label>
+        <div id="snEImages" class="sn-editor-images"></div>
+        <div class="sn-editor-note">You can remove an existing image, change its order, replace it with a new upload, or add another image. Existing images stay on Cloudinary unless you replace/remove their URL from this product.</div>
+      </div>
+      <div id="snEditorStatus" class="sn-editor-status"></div>
+    </div>
+    <div class="sn-editor-actions">
+      <button class="sn-editor-btn sn-editor-cancel" type="button" onclick="closeProductEditor()">CANCEL</button>
+      <button class="sn-editor-btn sn-editor-save" type="button" onclick="saveEditedProduct()">SAVE CHANGES</button>
+    </div>
+  </div>
+</div>
+<script id="shopnexa-full-product-editor-js">
+(function(){
+  const escE=v=>String(v??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
+  let editingId=null, imageRows=[];
+  function productsNow(){return Array.isArray(window.products)?window.products:[]}
+  function imageUrls(p){
+    const a=Array.isArray(p?.images)?p.images:[]; let out=a.map((x,i)=>({url:typeof x==='string'?x:(x&&x.url)||'',number:typeof x==='object'&&x?.number?x.number:i+1})).filter(x=>x.url);
+    if(p?.image&&!out.some(x=>x.url===p.image))out.push({url:p.image,number:out.length+1});
+    return out.sort((a,b)=>(Number(a.number)||0)-(Number(b.number)||0)).slice(0,10);
+  }
+  function renderEditorImages(){
+    const el=document.getElementById('snEImages'); if(!el)return;
+    el.innerHTML=imageRows.map((r,i)=>`
+      <div class="sn-editor-image-row" data-i="${i}">
+        <div class="sn-editor-image-top"><b>IMAGE ${i+1}</b><button type="button" class="sn-remove-image" onclick="removeEditorImage(${i})">REMOVE</button></div>
+        <img src="${escE(r.url||'')}" onerror="this.style.opacity='.2'" alt="">
+        <input class="sn-editor-input sn-e-image-url" value="${escE(r.url||'')}" placeholder="Image URL">
+        <input class="sn-editor-input sn-e-image-file" type="file" accept="image/*" style="margin-top:6px">
+        <input class="sn-editor-input sn-e-image-number" type="number" min="1" max="10" value="${Number(r.number)||i+1}" style="margin-top:6px">
+      </div>`).join('');
+  }
+  window.removeEditorImage=function(i){imageRows.splice(i,1);renderEditorImages()};
+  window.closeProductEditor=function(){const m=document.getElementById('snProductEditor');if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true')}editingId=null};
+  window.openProductEditor=function(id){
+    if(typeof window.admin!=='undefined' && !window.admin)return toast('Admin login required');
+    const p=productsNow().find(x=>String(x.id)===String(id)); if(!p)return toast('Product not found');
+    editingId=id;
+    document.getElementById('snEName').value=p.name||'';
+    document.getElementById('snESku').value=p.sku||'';
+    document.getElementById('snEPrice').value=p.price??'';
+    document.getElementById('snEOldPrice').value=p.oldPrice??p.compareAtPrice??'';
+    document.getElementById('snESalePrice').value=p.salePrice??'';
+    document.getElementById('snEDiscount').value=p.discount??'';
+    document.getElementById('snECategory').value=p.category||'Airbuds';
+    document.getElementById('snEStock').value=p.stock??0;
+    document.getElementById('snETag').value=p.tag||'NEW';
+    document.getElementById('snEVideo').value=p.video||'';
+    document.getElementById('snEDescription').value=p.description||'';
+    const specs=p.specifications??p.specs??'';
+    document.getElementById('snESpecs').value=typeof specs==='string'?specs:JSON.stringify(specs,null,2);
+    imageRows=imageUrls(p); while(imageRows.length<10)imageRows.push({url:'',number:imageRows.length+1});
+    renderEditorImages();
+    document.getElementById('snEditorTitle').textContent='Edit: '+(p.name||'Product');
+    document.getElementById('snEditorStatus').textContent='';
+    const m=document.getElementById('snProductEditor');m.classList.add('show');m.setAttribute('aria-hidden','false');
+  };
+  window.saveEditedProduct=async function(){
+    if(!editingId)return;
+    const status=document.getElementById('snEditorStatus');
+    const name=document.getElementById('snEName').value.trim(),price=document.getElementById('snEPrice').value;
+    if(!name||price==='')return toast('Product name and price are required');
+    try{
+      const rows=[...document.querySelectorAll('#snEImages .sn-editor-image-row')];
+      const finalImages=[];
+      for(let i=0;i<rows.length;i++){
+        const urlInput=rows[i].querySelector('.sn-e-image-url'),fileInput=rows[i].querySelector('.sn-e-image-file'),numInput=rows[i].querySelector('.sn-e-image-number');
+        let url=(urlInput?.value||'').trim();
+        const file=fileInput?.files?.[0];
+        if(file){
+          status.textContent='Uploading image '+(i+1)+'...';
+          if(typeof uploadFile!=='function')throw new Error('Image upload function is unavailable');
+          url=await uploadFile(file,'image');
+        }
+        if(url)finalImages.push({url,number:Number(numInput?.value)||i+1});
+      }
+      finalImages.sort((a,b)=>(a.number||0)-(b.number||0));
+      const specsRaw=document.getElementById('snESpecs').value.trim();
+      let specifications=specsRaw;
+      if(specsRaw){try{specifications=JSON.parse(specsRaw)}catch(_){}}
+      const data={
+        name,sku:document.getElementById('snESku').value.trim(),
+        price:Number(price)||0,oldPrice:Number(document.getElementById('snEOldPrice').value)||0,
+        salePrice:Number(document.getElementById('snESalePrice').value)||0,
+        discount:document.getElementById('snEDiscount').value.trim(),
+        category:document.getElementById('snECategory').value,
+        stock:Math.max(0,Number(document.getElementById('snEStock').value)||0),
+        tag:document.getElementById('snETag').value,
+        video:document.getElementById('snEVideo').value.trim(),
+        description:document.getElementById('snEDescription').value.trim(),
+        specifications,images:finalImages,updatedAt:Date.now()
+      };
+      status.textContent='Saving changes...';
+      await db.collection('products').doc(editingId).update(data);
+      status.textContent='Saved successfully';
+      toast('Product updated successfully');
+      await loadProducts();
+      renderAdminList();
+      setTimeout(closeProductEditor,500);
+    }catch(e){console.error(e);status.textContent=e.message||'Could not save changes';toast('Product update failed')}
+  };
+  window.openAllProductEditor=function(){
+    if(typeof window.admin!=='undefined' && !window.admin)return toast('Admin login required');
+    const el=document.getElementById('adminList'); if(!el)return toast('Open Admin Panel first');
+    const rows=productsNow().map(p=>`<div class="sn-editor-list-row"><img src="${escE(imageUrls(p)[0]?.url||'')}" alt=""><div><b>${escE(p.name||'Unnamed product')}</b><span>PKR ${Number(p.price||0).toLocaleString()} • ${escE(p.category||'Uncategorized')} • Stock: ${Number(p.stock??0)}</span></div><button class="sn-editor-edit" type="button" onclick="openProductEditor('${p.id}')">EDIT FULL PRODUCT</button></div>`).join('');
+    el.innerHTML=rows||'<p style="font-size:10px;color:#777">No products yet.</p>';
+  };
+  window.patchAdminEditorButton=function(){
+    const c=document.getElementById('adminContent'); if(!c)return;
+    if(document.getElementById('snOpenAllEditors'))return;
+    const b=document.createElement('button');b.id='snOpenAllEditors';b.className='refresh';b.type='button';b.style.marginTop='8px';b.innerHTML='<i class="fa-solid fa-pen-to-square"></i> FULL PRODUCT EDITOR';b.onclick=openAllProductEditor;
+    const h=c.querySelector('h4'); if(h)h.insertAdjacentElement('afterend',b); else c.appendChild(b);
+  };
+  const oldOpenAdmin=window.openAdmin;
+  if(typeof oldOpenAdmin==='function'){
+    window.openAdmin=function(){oldOpenAdmin();setTimeout(patchAdminEditorButton,50);setTimeout(openAllProductEditor,100)};
+  }
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProductEditor()});
+})();
+</script>
+
 </body></html>
